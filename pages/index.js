@@ -8,6 +8,9 @@ import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { ChakraProvider } from "@chakra-ui/react";
+import { Center, VStack } from "@chakra-ui/react";
+
+import Main from "../components/Main";
 
 const { chains, provider } = configureChains(
     [
@@ -36,19 +39,12 @@ export default function IndexPage() {
         <WagmiConfig client={wagmiClient}>
             <RainbowKitProvider chains={chains}>
                 <ChakraProvider>
-                    <div
-                        style={{
-                            width: "100vw",
-                            height: "100vh",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <ConnectButton />
-                        <p>ha ha ha ...</p>
-                    </div>
+                    <Center p="5">
+                        <VStack>
+                            <ConnectButton />
+                            <Main />
+                        </VStack>
+                    </Center>
                 </ChakraProvider>
             </RainbowKitProvider>
         </WagmiConfig>
