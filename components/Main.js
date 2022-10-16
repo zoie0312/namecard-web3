@@ -18,6 +18,7 @@ import Card from "./Card.tsx";
 import NFTCard from "./NFTCard.tsx";
 import useEnsData from "../hooks/useEns.tsx";
 import useImgColor from "../hooks/useImgColor.tsx";
+import Friends from "./Friends";
 
 export default function Main() {
     const { query } = useRouter();
@@ -51,12 +52,40 @@ export default function Main() {
         setFinalDomainName(domainName);
     };
 
+    const convertColor = (clr) => {
+        if (clr) {
+            return `rgb(${clr._rgb[0]},${clr._rgb[1]},${clr._rgb[2]})`;
+        } else {
+            return "";
+        }
+    };
+
+    const getBrightness = (clr) => {
+        if (clr) {
+            return (
+                clr._rgb[0] * 0.299 + clr._rgb[1] * 0.587 + clr._rgb[2] * 0.114
+            );
+        } else {
+            return 0;
+        }
+    };
+    const sortColors = (colors) => {
+        if (!colors) return [];
+        let clrs = colors
+            .map((clr) => ({ clr, brightness: getBrightness(clr) }))
+            .sort((a, b) => {
+                return a.brightness - b.brightness;
+            })
+            .map(({ clr }) => clr);
+        return clrs;
+    };
+
     return (
         <VStack>
             <Heading
-                my={8}
+                my={4}
                 color={
-                    sortedColors[0] ? convertColor(sortedColors[0]) : "gray.100"
+                    sortedColors[0] ? convertColor(sortedColors[0]) : "gray.200"
                 }
             >
                 A Web3 Namecard
@@ -93,7 +122,7 @@ export default function Main() {
                         setFinalDomainName("tinaaaaalee.eth");
                     }}
                 >
-                    tinaaaaalee.eth
+                    zzzzz.eth
                 </Link>
             </HStack>
             <Button
@@ -109,20 +138,26 @@ export default function Main() {
                 Fetch
                 {isFetching && <Spinner ml={3} size="sm" color="white" />}
             </Button>
-            <Card
-                cardData={ensData}
-                colors={sortedColors}
-                cardBgColor={convertColor(sortedColors[0])}
-            ></Card>
+            <Show above="md">
+                <Box mt="5">
+                    <NFTCard ethAddress={ensData.ethAddress || ""}></NFTCard>
+                </Box>
+            </Show>
+            <Box display="flex" alignItems="stretch">
+                <Card
+                    cardData={ensData}
+                    colors={sortedColors}
+                    cardBgColor={convertColor(sortedColors[0])}
+                ></Card>
+                <Friends />
+            </Box>
 
             <Show below="md">
                 <NFTCard ethAddress={ensData.ethAddress || ""}></NFTCard>
             </Show>
             <Center
                 w="100%"
-                py="4"
-                padding="3"
-                pos={{ base: "initial", md: "absolute" }}
+                py="2"
                 style={{ bottom: 0 }}
                 flexDirection="column"
             >
@@ -135,25 +170,6 @@ export default function Main() {
                         app.ens.domains
                     </Link>{" "}
                     to show on this namecard.
-                </Text>
-                <Text textAlign="center" fontSize="sm">
-                    This Demo is made by{" "}
-                    <Link
-                        isExternal
-                        href="https://www.facebook.com/cheyuwu345"
-                        textDecoration="underline"
-                    >
-                        Che-Yu Wu
-                    </Link>{" "}
-                    and{" "}
-                    <Link
-                        isExternal
-                        href="https://www.facebook.com/lee.ting.ting.tina"
-                        textDecoration="underline"
-                    >
-                        Ting-Ting Lee
-                    </Link>
-                    .
                 </Text>
             </Center>
         </VStack>
